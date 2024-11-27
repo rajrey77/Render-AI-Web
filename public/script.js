@@ -7,7 +7,7 @@ const enableImageCreation = document.getElementById('enableImageCreation');
 const messages = [];
 
 enableImageCreation.addEventListener('change', () => {
-    imageInput.disabled = !enableImageCreation.checked;
+    // No need to hide the image input
 });
 
 sendButton.addEventListener('click', async() => {
