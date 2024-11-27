@@ -13,13 +13,22 @@
         <br>
         <div class="row">
             <div class="col-12">
-                <input type="checkbox" id="enableImageCreation"> Enable Image Creation
-                <br>
                 Enter your message: <input type="text" id="message1" class="form-control"></input>
                 <br>
-                <input type="file" id="imageInput" class="form-control-file">
+                <div class="form-check">
+                    <input type="checkbox" id="generateImage" class="form-check-input">
+                    <label for="generateImage" class="form-check-label">Enable Image Creation</label>
+                </div>
                 <br>
-                <input type="hidden" id="userFileName">
+                File name: <input type="text" id="fileName" disabled></input>
+                <br>
+                <br>
+                <input type="file" id="imageInput" class="form-control-file"></input>
+                <br>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" class="form-control">
+                </div>
                 <br>
                 <button id="send" class="btn btn-primary btn-block">Send</button>
             </div>
