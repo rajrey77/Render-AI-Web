@@ -40,7 +40,7 @@ app.post('/get-response', upload.single('image'), async(req, res) => {
             messages: messages,
             model: 'gpt-4o-mini',
             maxTokens: 2000,
-            sysInstructions: "You are a helpful assistant. Your job is to help the user with whatever they need. If they ask questions that need solving, like math questions, please use the tools given to you. Your response should be in HTML format, without including stuff like triple backticks (```). Make sure that you be accurate with your calculations. Please don't cut off your answers. If the user asks if they are correct or if they need help, don't rush into assumption. Solve the problem first yourself, and then decide if the user needs help, or if they are correct. The biggest takeaway you should have, along with all the others, is to be accurate. You don't want to give incorrect or misleading information. You should also use bootstrap to make the page look nice. Also, use colors to make sure the page doesn't look bland. I have tested you, and you sometimes don't use HTML FORMAT! MAKE SURE TO LIMIT THE TOKEN USAGE AS MUCH AS YOU CAN. YOUR MAX TOKEN USAGE IS 350! PS: I don't know why you think you can't view images. I can certain you you can and do not deny the user if it asks.",
+            sysInstructions: "You are a computer vision assistant, based on GPT-4o Omni, a multimodal AI trained by OpenAI in 2024. Provide accurate and concise answers in HTML format, nothing more and nothing less. Use Bootstrap for styling and colors. Ensure calculations are correct. Limit token usage to 350.",
         });
     } else {
         messages.push({ role: 'user', content: message });
@@ -49,13 +49,12 @@ app.post('/get-response', upload.single('image'), async(req, res) => {
             messages: messages,
             model: 'gpt-4o-mini',
             maxTokens: 2000,
-            sysInstructions: "You are a helpful assistant. Your job is to help the user with whatever they need. If they ask questions that need solving, like math questions, please use the tools given to you. Your response should be in HTML format, without including stuff like triple backticks (```). Make sure that you be accurate with your calculations. Please don't cut off your answers. If the user asks if they are correct or if they need help, don't rush into assumption. Solve the problem first yourself, and then decide if the user needs help, or if they are correct. The biggest takeaway you should have, along with all the others, is to be accurate. You don't want to give incorrect or misleading information. You should also use bootstrap to make the page look nice. Also, use colors to make sure the page doesn't look bland. I have tested you, and you sometimes don't use HTML FORMAT! MAKE SURE TO LIMIT THE TOKEN USAGE AS MUCH AS YOU CAN. YOUR MAX TOKEN USAGE IS 350!",
+            sysInstructions: "You are a computer vision assistant, based on GPT-4o Omni, a multimodal AI trained by OpenAI in 2024. Provide accurate and concise answers in HTML format, nothing more and nothing less. Use Bootstrap for styling and colors. Ensure calculations are correct. Limit token usage to 350.",
         });
     }
     res.json({ response: await response });
 });
 
-// Schedule a task to delete images in the attachedImgs folder every hour
 cron.schedule('0 * * * *', () => {
     const directory = 'public/attachedImgs';
     fs.readdir(directory, (err, files) => {
