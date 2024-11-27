@@ -2,13 +2,21 @@ const messageEl = document.getElementById('message1');
 const sendButton = document.getElementById('send');
 const response = document.getElementById('response');
 const imageInput = document.getElementById('imageInput');
+const enableImageCreation = document.getElementById('enableImageCreation');
 
 const messages = [];
+
+enableImageCreation.addEventListener('change', () => {
+    imageInput.disabled = !enableImageCreation.checked;
+});
 
 sendButton.addEventListener('click', async() => {
     const message = messageEl.value;
     const imageFile = imageInput.files[0];
-    if (message || imageFile) {
+    const createImage = enableImageCreation.checked;
+    const userFileName = `generated_image_${Date.now()}.png`;
+
+    if (message || imageFile || createImage) {
         const messagePushUser = {
             role: 'user',
             content: message,
@@ -21,6 +29,8 @@ sendButton.addEventListener('click', async() => {
             const formData = new FormData();
             formData.append('message', message);
             formData.append('messages', JSON.stringify(messages));
+            formData.append('createImage', createImage);
+            formData.append('userFileName', userFileName);
             if (imageFile) {
                 formData.append('image', imageFile);
             }
@@ -30,25 +40,34 @@ sendButton.addEventListener('click', async() => {
                 body: formData,
             });
             const data = await fresponse.json();
-            messagePushAssistant.content = data.response;
-            messages.push(messagePushUser);
-            messages.push(messagePushAssistant);
 
-            const userMessageEl = document.createElement('div');
-            userMessageEl.className = 'user-message';
-            userMessageEl.textContent = `You: ${message}`;
+            if (createImage) {
+                const downloadLink = document.createElement('a');
+                downloadLink.href = data.downloadLink;
+                downloadLink.download = userFileName;
+                downloadLink.textContent = 'Download Generated Image';
+                response.prepend(downloadLink);
+            } else {
+                messagePushAssistant.content = data.response;
+                messages.push(messagePushUser);
+                messages.push(messagePushAssistant);
 
-            const assistantMessageEl = document.createElement('div');
-            assistantMessageEl.className = 'assistant-message';
-            assistantMessageEl.innerHTML = `Assistant: ${data.response}`;
+                const userMessageEl = document.createElement('div');
+                userMessageEl.className = 'user-message';
+                userMessageEl.textContent = `You: ${message}`;
 
-            const separator = document.createElement('hr');
-            separator.style.borderWidth = '9px'; // Set the thickness of the line
-            
-            response.prepend(separator);
-            response.prepend(assistantMessageEl);
-            response.prepend(separator.cloneNode()); // Add another line before the response
-            response.prepend(userMessageEl);
+                const assistantMessageEl = document.createElement('div');
+                assistantMessageEl.className = 'assistant-message';
+                assistantMessageEl.innerHTML = `Assistant: ${data.response}`;
+
+                const separator = document.createElement('hr');
+                separator.style.borderWidth = '9px'; // Set the thickness of the line
+                
+                response.prepend(separator);
+                response.prepend(assistantMessageEl);
+                response.prepend(separator.cloneNode()); // Add another line before the response
+                response.prepend(userMessageEl);
+            }
 
             messageEl.value = ''; // Clear the input field
             imageInput.value = ''; // Clear the file input

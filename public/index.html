@@ -13,9 +13,13 @@
         <br>
         <div class="row">
             <div class="col-12">
+                <input type="checkbox" id="enableImageCreation"> Enable Image Creation
+                <br>
                 Enter your message: <input type="text" id="message1" class="form-control"></input>
                 <br>
-                <input type="file" id="imageInput" class="form-control-file">
+                <input type="file" id="imageInput" class="form-control-file" disabled>
+                <br>
+                <input type="hidden" id="userFileName">
                 <br>
                 <button id="send" class="btn btn-primary btn-block">Send</button>
             </div>
