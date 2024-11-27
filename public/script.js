@@ -6,11 +6,16 @@ const enableImageCreation = document.getElementById('enableImageCreation');
 
 const messages = [];
 
+messageEl.addEventListener('input', () => {
+    sendButton.disabled = !messageEl.value.trim();
+});
+
 enableImageCreation.addEventListener('change', () => {
     // No need to hide the image input
 });
 
 sendButton.addEventListener('click', async() => {
+    sendButton.disabled = true; // Disable the button when processing
     const message = messageEl.value;
     const imageFile = imageInput.files[0];
     const createImage = enableImageCreation.checked;
@@ -73,6 +78,8 @@ sendButton.addEventListener('click', async() => {
             imageInput.value = ''; // Clear the file input
         } catch (error) {
             console.error('Error:', error);
+        } finally {
+            sendButton.disabled = false; // Re-enable the button after processing
         }
     }
 });
