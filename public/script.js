@@ -21,18 +21,21 @@ sendButton.addEventListener('click', async() => {
     const generateImageBoolean = generateImage.checked;
     const message = messageEl.value;
     const imageFile = imageInput.files[0];
-    const password = passwordEl.value;
+    const password = passwordEl.value ? passwordEl.value : false;
     let allowImageCreation = false;
-    const authResponse = await fetch('/authenticate', {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${password}`
+    let authResponse;
+    if(!!password) {
+        authResponse = await fetch('/authenticate', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${password}`
+            }
+        });
+        if(authResponse.status === 403 || authResponse.status === 401) {
+            allowImageCreation = false;
+        }else if(authResponse.status === 200) {
+            allowImageCreation = true;
         }
-    });
-    if(authResponse.status === 403 || authResponse.status === 401) {
-        allowImageCreation = false;
-    }else if(authResponse.status === 200) {
-        allowImageCreation = true;
     }
     if (message || imageFile) {
         const messagePushUser = {
