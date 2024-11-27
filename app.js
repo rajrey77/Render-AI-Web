@@ -72,7 +72,7 @@ app.post('/get-response', upload, async(req, res) => {
     let messages = Array.isArray(messagesArr) ? messagesArr : JSON.parse(messagesArr);
     const generateImageBoolean = generateImage === 'true';
     const fileNameValue = fileName || `dall-e-${Date.now()}.png`;
-    const imgModel = '';
+    let imgModel = '';
 
     if (generateImageBoolean) {
         if (!userImageCount[userIp]) {
