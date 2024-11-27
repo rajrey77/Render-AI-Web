@@ -20,12 +20,13 @@
                     <label for="generateImage" class="form-check-label">Enable Image Creation</label>
                 </div>
                 <br>
-                File name: <input type="text" id="fileName" disabled></input>
-                <br>
-                <br>
                 <input type="file" id="imageInput" class="form-control-file"></input>
+                <br>     
+                <div id="fileNameContainer" style="display: none; visibility: hidden;">
+                    Image name: <input type="text" id="fileName" disabled></input>
+                </div>
                 <br>
-                <div class="form-group">
+                <div class="form-group" style="display: none; visibility: hidden;" id="passwordContainer">
                     <label for="password">Password:</label>
                     <input type="password" id="password" class="form-control">
                 </div>

@@ -5,14 +5,25 @@ const imageInput = document.getElementById('imageInput');
 const generateImage = document.getElementById('generateImage');
 const fileNameEl = document.getElementById('fileName');
 const passwordEl = document.getElementById('password');
+const passwordContainer = document.getElementById('passwordContainer');
+const fileNameContainer = document.getElementById('fileNameContainer');
+const imageContainer = document.getElementById('imageContainer');
 
 const messages = [];
 
 generateImage.addEventListener('change', () => {
     if (generateImage.checked) {
         fileNameEl.disabled = false;
+        fileNameContainer.style.display = 'block';
+        passwordContainer.style.display = 'block';
+        fileNameContainer.style.visibility = 'visible';
+        passwordContainer.style.visibility = 'visible';
     } else {
         fileNameEl.disabled = true;
+        fileNameContainer.style.display = 'none';
+        passwordContainer.style.display = 'none';
+        fileNameContainer.style.visibility = 'hidden';
+        passwordContainer.style.visibility = 'hidden';
     }
 });
 

@@ -6,9 +6,13 @@ const fs = require('fs');
 const cron = require('node-cron');
 const cors = require('cors');
 const dotenv = require('dotenv');
-dotenv.config();
+dotenv.config(); // Load environment variables from .env file
+
 const app = express();
 const port = process.env.PORT || 3000;
+const imageGenerationLimit = parseInt(process.env.IMAGE_GENERATION_LIMIT, 10);
+
+const userImageCount = {};
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -44,7 +48,7 @@ app.post('/authenticate', (req, res) => {
     const [type, password] = authHeader.split(' ');
     if (type !== 'Bearer' || password !== process.env.ACCESS_PASSWORD) {
         return res.status(403).json({ error: 'Forbidden' });
-    }else{
+    } else {
         return res.status(200).json({ message: 'Authenticated' });
     }
 });
@@ -62,17 +66,32 @@ app.post('/get-image', upload, async(req, res) => {
 });
 app.post('/get-response', upload, async(req, res) => {
     const { message, messagesArr, generateImage, fileName } = req.body;
+    const userIp = req.ip;
     const imageLink = req.files['image'] ? `./public/attachedImgs/${req.files['image'][0].filename}` : null;
     const linkImage = !!req.files['image'];
     let messages = Array.isArray(messagesArr) ? messagesArr : JSON.parse(messagesArr);
     const generateImageBoolean = generateImage === 'true';
     const fileNameValue = fileName || `dall-e-${Date.now()}.png`;
+    const imgModel = '';
+
+    if (generateImageBoolean) {
+        if (!userImageCount[userIp]) {
+            userImageCount[userIp] = 0;
+        }
+        if (userImageCount[userIp] > imageGenerationLimit) {
+            imgModel = 'dall-e-2';
+        }else{
+            imgModel = 'dall-e-3';
+        }
+        userImageCount[userIp] += 1;
+    }
+
     try {
         let response;
         if(generateImageBoolean) {
             response = await eai.image.generate({
                 prompt: message,
-                model: 'dall-e-2',
+                model: imgModel,
             }, {
                 file: true,
                 fileName: fileNameValue
@@ -108,7 +127,7 @@ app.post('/get-response', upload, async(req, res) => {
     }
 });
 
-cron.schedule('0 * * * *', () => {
+cron.schedule('0 0 * * *', () => {
     const directory = 'public/attachedImgs';
     fs.readdir(directory, (err, files) => {
         if (err) throw err;
@@ -119,6 +138,10 @@ cron.schedule('0 * * * *', () => {
             });
         }
     });
+    // Reset user image count every day at midnight
+    for (const user in userImageCount) {
+        userImageCount[user] = 0;
+    }
 });
 
 app.listen(port, () => {
